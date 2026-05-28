@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="card">
+            <h1>URL Shortener</h1>
+            <p class="subtitle">Shorten long links, track clicks, and view analytics.</p>
+
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+
+            <form id="shortenForm">
+                <input type="url" id="longUrl" placeholder="Enter a long URL..." required>
+                <button type="submit">Shorten URL</button>
+            </form>
+
+            <div id="result" class="result hidden"></div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("shortenForm");
+        const result = document.getElementById("result");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const longUrl = document.getElementById("longUrl").value;
+
+            const response = await fetch("/api/shorten", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ long_url: longUrl })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                result.classList.remove("hidden");
+                result.innerHTML = `<p class="error">${data.error}</p>`;
+                return;
+            }
+
+            result.classList.remove("hidden");
+            result.innerHTML = `
+                <p><strong>Short URL:</strong></p>
+                <a href="${data.short_url}" target="_blank">${data.short_url}</a>
+                <p>
+                    <a href="/analytics/${data.short_code}">View Analytics</a>
+                </p>
+            `;
+        });
+    </script>
+</body>
+</html>

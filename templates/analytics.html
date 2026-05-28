@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics - {{ url.short_code }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="card">
+            <h1>Analytics</h1>
+
+            <p><strong>Short Code:</strong> {{ url.short_code }}</p>
+            <p><strong>Original URL:</strong> <a href="{{ url.long_url }}" target="_blank">{{ url.long_url }}</a></p>
+            <p><strong>Total Clicks:</strong> {{ url.total_clicks }}</p>
+            <p><strong>Created At:</strong> {{ url.created_at }}</p>
+
+            <h2>Click History</h2>
+
+            {% if url.clicks %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Clicked At</th>
+                            <th>IP Address</th>
+                            <th>User Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for click in url.clicks %}
+                            <tr>
+                                <td>{{ click.clicked_at }}</td>
+                                <td>{{ click.ip_address }}</td>
+                                <td>{{ click.user_agent }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No clicks yet.</p>
+            {% endif %}
+
+            <a class="back-link" href="/">Create another short link</a>
+        </section>
+    </main>
+</body>
+</html>
